@@ -49,7 +49,16 @@ public class DataItem implements Serializable {
 
     @Override
     public String toString() {
-        return timeStamp;
+        StringBuilder stringBuilder = new StringBuilder();
+        stringBuilder.append("Time: ");
+        stringBuilder.append(getTime());
+        stringBuilder.append("\nTemp: ");
+        stringBuilder.append(getTemp());
+        stringBuilder.append(", Moisture: ");
+        stringBuilder.append(getMoisture());
+        stringBuilder.append(", uBatt: ");
+        stringBuilder.append(getuBatt());
+        return stringBuilder.toString();
     }
 }
 

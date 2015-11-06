@@ -22,15 +22,15 @@ public class FullscreenActivity extends Activity {
         plant = (PlantData) getIntent().getSerializableExtra("plant");
 
         DataItem selected = plant.getData().get(plant.getData().size() - 1); //.toString();
-        dataText.setText("Last Entry: " + selected.toString() + "\nTemp: " + selected.getTemp() + "\nMoisture: " + selected.getMoisture() + "\nuBatt: " + selected.getuBatt());
+        dataText.setText("Last Entry:\n" + getString(R.string.data_text, selected.getTime(), selected.getTemp(), selected.getMoisture(), selected.getuBatt()));
 
         final ListView dataList = (ListView) findViewById(R.id.listView);
         ArrayAdapter<DataItem> arrayAdapter = new ArrayAdapter<DataItem>(this, android.R.layout.simple_list_item_1, plant.getData());
         dataList.setAdapter(arrayAdapter);
         dataList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             public void onItemClick(AdapterView<?> arg0, View v, int position, long arg3) {
-                DataItem selected = plant.getData().get(position); //.toString();
-                dataText.setText(selected.toString() + "\nTemp: " + selected.getTemp() + "\nMoisture: " + selected.getMoisture() + "\nuBatt: " + selected.getuBatt());
+                DataItem selected = plant.getData().get(position);
+                dataText.setText(getString(R.string.data_text, selected.getTime(), selected.getTemp(), selected.getMoisture(), selected.getuBatt()));
             }
         });
     }
