@@ -28,20 +28,24 @@ import java.util.ArrayList;
 public class MainActivity extends AppCompatActivity {
 
     private static final String DEBUG_TAG = "IoT";
-    private final String STRINGURL = "http://api.thingspeak.com/channels/62925/feeds.json?key=WM7XSLBEZIO38N9H&results=1000";
-    // "http://api.thingspeak.com/channels/62925/feed.json?key=WM7XSLBEZIO38N9H";
-    // http://api.androidhive.info/volley/person_object.json
-
+    private final String URLLISA = "http://api.thingspeak.com/channels/62925/feeds.json?key=WM7XSLBEZIO38N9H&results=8000";
+    private final String URLSARA = "http://api.thingspeak.com/channels/64990/feeds.json?key=9TJ90ZBZZRLO2OWP&results=8000";
+    private String[] plantURL = new String[2];
     private ArrayList<PlantData> plantList = new ArrayList<PlantData>();
+    private ListView dataList;
+    private ArrayAdapter<PlantData> arrayAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        plantURL[0] = URLLISA;
+        plantURL[1] = URLSARA;
+
         // BUILD List
-        final ListView dataList = (ListView) findViewById(R.id.plantList);
-        ArrayAdapter<PlantData> arrayAdapter = new ArrayAdapter<PlantData>(this, android.R.layout.simple_list_item_1, plantList);
+        dataList = (ListView) findViewById(R.id.plantList);
+        arrayAdapter = new ArrayAdapter<PlantData>(this, android.R.layout.simple_list_item_1, plantList);
         dataList.setAdapter(arrayAdapter);
         dataList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             public void onItemClick(AdapterView<?> arg0, View v, int position, long arg3) {
@@ -50,28 +54,34 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        Log.d(DEBUG_TAG, STRINGURL);
+        Log.d(DEBUG_TAG, URLLISA);
         ConnectivityManager connMgr = (ConnectivityManager)
                 getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
         if (networkInfo != null && networkInfo.isConnected()) {
-            boolean tmp = parseJSON(STRINGURL);
+            for (int i = 0; i < plantURL.length; i++) {
+                parseJSON(plantURL[i]);
+            }
         } else {
             Toast.makeText(getApplicationContext(), "No network connection available.", Toast.LENGTH_LONG).show();
         }
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+
+        dataList = (ListView) findViewById(R.id.plantList);
         dataList.invalidateViews();
     }
 
-
     public void plantActivity(PlantData selected) {
-
-        Intent intent = new Intent(this, FullscreenActivity.class);
+        Intent intent = new Intent(this, PlantDataActivity.class);
         intent.putExtra("plant", selected);
         startActivity(intent);
-
     }
 
-    private boolean parseJSON(String stringUrl) {
+    private void parseJSON(String stringUrl) {
 
         JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.GET, stringUrl, null, new Response.Listener<JSONObject>() {
 
@@ -89,7 +99,7 @@ public class MainActivity extends AppCompatActivity {
                     plantList.add(new PlantData(tmpName));
                     Log.d("JsonObj", tmpName);
 
-                    for (int j = 0; j < arrayData.length(); j++) {
+                    for (int j = arrayData.length() - 1; j >= 0; j = j - 5) { // only take 5th value start from end
                         JSONObject tmpObj = (JSONObject) arrayData.get(j);
                         Log.d("JsonObj", tmpObj.toString());
                         if (tmpObj.getString("created_at") == "null" || tmpObj.getString("entry_id") == "null") {
@@ -100,7 +110,7 @@ public class MainActivity extends AppCompatActivity {
                             } else {
                                 temp = tmpObj.getInt("field1");
                             }
-                            if (!isInteger(tmpObj.getString("field1"))) {
+                            if (!isInteger(tmpObj.getString("field2"))) {
                                 moisture = -1;
                             } else {
                                 moisture = tmpObj.getInt("field2");
@@ -119,6 +129,7 @@ public class MainActivity extends AppCompatActivity {
                     e.printStackTrace();
                     Toast.makeText(getApplicationContext(), "ERROR: " + e.getMessage(), Toast.LENGTH_LONG).show();
                 }
+                arrayAdapter.notifyDataSetChanged();
             }
         }, new Response.ErrorListener() {
 
@@ -129,8 +140,6 @@ public class MainActivity extends AppCompatActivity {
             }
         });
         AppController.getInstance().addToRequestQueue(jsonObjectRequest);
-
-        return true;
     }
 
     private boolean isInteger(String input) {

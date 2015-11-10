@@ -25,12 +25,12 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".FullscreenActivity"
+            android:name=".PlantDataActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
             android:label="@string/app_name"
             android:theme="@style/FullscreenTheme">
             <intent-filter>
-                <action android:name="com.hurk.iotplant.FullscreenActivity" />
+                <action android:name="com.hurk.iotplant.PlantDataActivity" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
