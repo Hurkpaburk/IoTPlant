@@ -90,7 +90,7 @@ public class MainActivity extends AppCompatActivity {
                 Log.d("OnResponse", response.toString());
 
                 try {
-                    int temp, moisture, uBatt;
+                    int temp, moisture, uBatt, inc;
 
                     JSONObject channelInfo = response.getJSONObject("channel");
                     JSONArray arrayData = response.getJSONArray("feeds");
@@ -99,7 +99,13 @@ public class MainActivity extends AppCompatActivity {
                     plantList.add(new PlantData(tmpName));
                     Log.d("JsonObj", tmpName);
 
-                    for (int j = arrayData.length() - 1; j >= 0; j = j - 5) { // only take 5th value start from end
+                    if (arrayData.length() <= 100) {
+                        inc = 1;
+                    } else {
+                        inc = 5;
+                    }
+
+                    for (int j = arrayData.length() - 1; j >= 0; j = j - inc) { // only take 5th value start from end
                         JSONObject tmpObj = (JSONObject) arrayData.get(j);
                         Log.d("JsonObj", tmpObj.toString());
                         if (tmpObj.getString("created_at") == "null" || tmpObj.getString("entry_id") == "null") {
