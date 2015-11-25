@@ -1,5 +1,6 @@
 package com.hurk.iotplant;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.net.ConnectivityManager;
@@ -24,13 +25,15 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
 
     private static final String DEBUG_TAG = "IoT";
     private final String URLLISA = "http://api.thingspeak.com/channels/62925/feeds.json?key=WM7XSLBEZIO38N9H&results=8000";
     private final String URLSARA = "http://api.thingspeak.com/channels/64990/feeds.json?key=9TJ90ZBZZRLO2OWP&results=8000";
-    private String[] plantURL = new String[2];
+    private final String URLSTINA = "https://api.thingspeak.com/channels/66458/feed.json?key=656GMCQ15V87M8HF&results=8000";
+    private List<String> plantURL = new ArrayList<String>();
     private ArrayList<PlantData> plantList = new ArrayList<PlantData>();
     private ListView dataList;
     private ArrayAdapter<PlantData> arrayAdapter;
@@ -40,8 +43,9 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        plantURL[0] = URLLISA;
-        plantURL[1] = URLSARA;
+        plantURL.add(URLLISA);
+        plantURL.add(URLSARA);
+        plantURL.add(URLSTINA);
 
         // BUILD List
         dataList = (ListView) findViewById(R.id.plantList);
@@ -54,13 +58,13 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        Log.d(DEBUG_TAG, URLLISA);
         ConnectivityManager connMgr = (ConnectivityManager)
                 getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
+
         if (networkInfo != null && networkInfo.isConnected()) {
-            for (int i = 0; i < plantURL.length; i++) {
-                parseJSON(plantURL[i]);
+            for (String temp : plantURL) {
+                parseJSON(temp);
             }
         } else {
             Toast.makeText(getApplicationContext(), "No network connection available.", Toast.LENGTH_LONG).show();
@@ -68,10 +72,11 @@ public class MainActivity extends AppCompatActivity {
     }
 
     @Override
-    protected void onStart() {
-        super.onStart();
+    protected void onResume() {
+        super.onResume();
 
-        dataList = (ListView) findViewById(R.id.plantList);
+        Log.d("onResume", "On Resume");
+        Log.d("plantURL Size", Integer.toString(plantURL.size()));
         dataList.invalidateViews();
     }
 
@@ -156,4 +161,23 @@ public class MainActivity extends AppCompatActivity {
             return false;
         }
     }
+
+    public void addNewPlant(View view) {
+        Intent intent = new Intent(this, PlantConfig.class);
+        startActivityForResult(intent, 1);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        Log.d("onActivityResult", "on Activity Result");
+        if (requestCode == 1) {
+            if (resultCode == Activity.RESULT_OK) {
+                plantURL.add(data.getStringExtra("message"));
+                parseJSON(plantURL.get(plantURL.size() - 1));
+                Log.d("plantURL Size", Integer.toString(plantURL.size()));
+            }
+        }
+    }
+
 }

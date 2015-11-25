@@ -2,5 +2,7 @@
     <string name="app_name">Plant Health Status</string>
     <string name="title_activity_main">Plant Health Status</string>
     <string name="channel_text">Health status for plants at Comentor office\nChoose which plant to show</string>
+    <string name="new_plant_text">Add new plant.\nChannel ID and API Key</string>
     <string name="data_text">%1$s\nTemp: %2$d\nMoisture: %3$d\nuBatt: %4$d</string>
+    <string name="title_activity_plant_config">PlantConfig</string>
 </resources>

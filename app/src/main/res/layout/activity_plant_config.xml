@@ -5,12 +5,11 @@
     android:background="@color/background_material_light"
     android:orientation="vertical"
     android:showDividers="middle"
-    tools:context=".MainActivity">
+    tools:context=".PlantConfig">
 
     <LinearLayout
         android:layout_width="wrap_content"
-        android:layout_height="fill_parent"
-        android:layout_weight="2"
+        android:layout_height="wrap_content"
         android:gravity="top"
         android:orientation="horizontal">
 
@@ -19,35 +18,46 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_margin="16dp"
-            android:layout_weight="1"
             android:gravity="left"
             android:singleLine="false"
-            android:text="@string/channel_text"
+            android:text="@string/new_plant_text"
             android:textAppearance="?android:attr/textAppearanceLarge"></TextView>
 
         <ImageView
             android:id="@+id/imageView"
-            android:layout_width="wrap_content"
-            android:layout_height="fill_parent"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
             android:layout_gravity="top"
             android:layout_weight="1"
             android:scaleType="fitCenter"
             android:src="@drawable/flower" />
     </LinearLayout>
 
-    <ListView
-        android:id="@+id/plantList"
-        android:layout_width="wrap_content"
-        android:layout_height="fill_parent"
-        android:layout_weight="1"
-        android:padding="16dp" />
+    <EditText
+        android:id="@+id/plantChannel"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="left"
+        android:ems="10"
+        android:hint="Channel"
+        android:inputType="text" />
+
+    <EditText
+        android:id="@+id/plantKey"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="left"
+        android:ems="10"
+        android:hint="API key"
+        android:inputType="text" />
 
     <Button
-        android:id="@+id/addNewPlant"
+        android:id="@+id/newPlant"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
-        android:onClick="addNewPlant"
-        android:text="New Plant" />
+        android:nestedScrollingEnabled="false"
+        android:onClick="newPlant"
+        android:text="Add Plant" />
 
 </LinearLayout>
