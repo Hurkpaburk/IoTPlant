@@ -1,7 +1,9 @@
 package com.hurk.iotplant;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
@@ -33,10 +35,12 @@ public class MainActivity extends AppCompatActivity {
     private final String URLLISA = "http://api.thingspeak.com/channels/62925/feeds.json?key=WM7XSLBEZIO38N9H&results=8000";
     private final String URLSARA = "http://api.thingspeak.com/channels/64990/feeds.json?key=9TJ90ZBZZRLO2OWP&results=8000";
     private final String URLSTINA = "https://api.thingspeak.com/channels/66458/feed.json?key=656GMCQ15V87M8HF&results=8000";
+    private final Context context = this;
     private List<String> plantURL = new ArrayList<String>();
     private ArrayList<PlantData> plantList = new ArrayList<PlantData>();
     private ListView dataList;
     private ArrayAdapter<PlantData> arrayAdapter;
+    private PlantData tmpPlant;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,6 +59,34 @@ public class MainActivity extends AppCompatActivity {
             public void onItemClick(AdapterView<?> arg0, View v, int position, long arg3) {
                 PlantData selected = plantList.get(position); //.toString();
                 plantActivity(selected);
+            }
+        });
+
+        dataList.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+            @Override
+            public boolean onItemLongClick(AdapterView<?> arg0, View v, int position, long arg3) {
+
+                tmpPlant = plantList.get(position);
+                AlertDialog.Builder builder = new AlertDialog.Builder(context);
+                builder.setMessage("Remove: " + plantList.get(position).toString());
+                builder.setCancelable(false);
+                builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        arrayAdapter.remove(tmpPlant);
+                        plantList.remove(tmpPlant);
+                        arrayAdapter.notifyDataSetChanged();
+                        dataList.invalidateViews();
+                    }
+                });
+                builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.cancel();
+                    }
+                });
+                builder.show();
+                return true;
             }
         });
 
